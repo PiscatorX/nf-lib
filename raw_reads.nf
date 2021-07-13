@@ -18,8 +18,6 @@ process  ubam2fastq{
        		bamtofastq \
        		-i ${uBAM} \
 		-fq ${fastq}
-      
-       head ${fastq}
 
     """
 
