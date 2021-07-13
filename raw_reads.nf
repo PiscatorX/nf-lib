@@ -21,5 +21,27 @@ process  ubam2fastq{
 
     """
 
-
 }
+
+
+
+process fastqc_SE{
+
+    input:
+	path SE_reads
+
+    output:
+       file "${SE_reads.baseName}*"
+
+    """
+      
+      fastqc \
+      	     --extract \
+    	     -f fastq \
+    	     -t 2 \
+             ${SE_reads}
+
+    """
+    
+}
+
