@@ -54,7 +54,7 @@ process fastqc_SE{
 
 process multiqc{
 
-        "$launchDir/${params.WD}/fastq_SE/", , mode: 'move' 
+        publishDir "$launchDir/${params.WD}/fastq_SE/", mode: 'move' 
 	input:
 		path fastqc_data
 
