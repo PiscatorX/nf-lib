@@ -1,7 +1,11 @@
 #!/usr/bin/env nextflow
 
+
+
+
 process  ubam2fastq{
 
+    publishDir "$launchDir/${params.WD}/ubam2fastq/"
     echo true
     input:
 	path uBAM 
@@ -27,6 +31,7 @@ process  ubam2fastq{
 
 process fastqc_SE{
 
+    publishDir "$launchDir/${params.WD}/fastq_SE/"
     input:
 	path SE_reads
 
@@ -49,7 +54,7 @@ process fastqc_SE{
 
 process multiqc{
 
-
+        "$launchDir/${params.WD}/fastq_SE/" 
 	input:
 		path fastqc_data
 
