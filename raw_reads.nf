@@ -31,7 +31,7 @@ process  ubam2fastq{
 
 process fastqc_SE{
 
-    publishDir "$launchDir/${params.WD}/fastq_SE/", , mode: 'move'
+    publishDir "$launchDir/${params.WD}/fastq_SE/", mode: 'move'
     input:
 	path SE_reads
 
