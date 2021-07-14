@@ -45,3 +45,23 @@ process fastqc_SE{
     
 }
 
+
+
+process multiqc{
+
+
+	input:
+		path fastqc_data
+
+	output:
+		path "multiqc*"
+
+
+	"""
+	
+           multiqc .
+
+
+	"""
+	 
+}
