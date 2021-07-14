@@ -70,3 +70,40 @@ process multiqc{
 	"""
 	 
 }
+
+
+
+
+process trimmomatic_SE{
+
+    memory "${params.m_mem} GB"
+    cpus  params.mtp_cores
+    publishDir path: "$launchDir/${params.WD}/trimmomatic", mode: 'copy'
+    
+    input:
+	path SE_read 
+
+    output:
+        path ("trim_${SE_read}"), emit: TrimmedRead
+        path ("${read_basename}.*")  
+
+    script:
+	read_basename =  SE_read.getSimpleName()
+    
+"""
+	
+   trimmomatic SE \
+	${SE_read} \
+        trim_${SE_read} \
+	-threads ${params.mtp_cores} \
+	-phred33\
+	-trimlog ${read_basename}.log \
+        -summary ${read_basename}.summary \
+	LEADING:10 \
+	TRAILING:10 \
+	SLIDINGWINDOW:25:10 \
+	MINLEN:50  
+   
+"""	
+
+}
