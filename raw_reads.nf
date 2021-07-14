@@ -5,7 +5,7 @@
 
 process  ubam2fastq{
 
-    publishDir "$launchDir/${params.WD}/ubam2fastq/"
+    publishDir "$launchDir/${params.WD}/ubam2fastq/", mode: 'copy'
     echo true
     input:
 	path uBAM 
@@ -31,7 +31,7 @@ process  ubam2fastq{
 
 process fastqc_SE{
 
-    publishDir "$launchDir/${params.WD}/fastq_SE/"
+    publishDir "$launchDir/${params.WD}/fastq_SE/", , mode: 'move'
     input:
 	path SE_reads
 
@@ -54,7 +54,7 @@ process fastqc_SE{
 
 process multiqc{
 
-        "$launchDir/${params.WD}/fastq_SE/" 
+        "$launchDir/${params.WD}/fastq_SE/", , mode: 'move' 
 	input:
 		path fastqc_data
 
