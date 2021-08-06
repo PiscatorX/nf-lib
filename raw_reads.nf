@@ -1,11 +1,10 @@
-#!/usr/bin/env nextflow
 
 
 
 
 process  ubam2fastq{
 
-    publishDir "$launchDir/${params.WD}/ubam2fastq/", mode: 'copy'
+    publishDir "${params.WD}/ubam2fastq/", mode: 'copy'
     echo true
     input:
 	path uBAM 
@@ -31,19 +30,25 @@ process  ubam2fastq{
 
 process fastqc_SE{
 
-    publishDir "$launchDir/${params.WD}/fastq_SE/", mode: 'move'
+    publishDir "${params.WD}/fastq_SE/${outdir}"
+    cpus params.ltp_cores
     input:
-	path SE_reads
-
+    	path SE_reads
+	val outdir
+	
+	
     output:
-       file "${SE_reads.baseName}*"
+        path "${fastqc_basename}*html"
+
+
+    script:
+        fastqc_basename = SE_reads.getSimpleName()
 
     """
-      
-      fastqc \
-      	     --extract \
+        
+         fastqc \
     	     -f fastq \
-    	     -t 2 \
+    	     --threads ${params.ltp_cores} \
              ${SE_reads}
 
     """
@@ -54,21 +59,20 @@ process fastqc_SE{
 
 process multiqc{
 
-        publishDir "$launchDir/${params.WD}/fastq_SE/", mode: 'move' 
+        publishDir "${params.WD}/multiqc/", mode: 'move' 
 	input:
-		path fastqc_data
+	     path fastqc_html
+	     val outdir
 
 	output:
-		path "multiqc*"
+             path "${outdir}*"
 
 
 	"""
-	
-           multiqc .
-
+            multiqc  . \
+            --filename ${outdir} 
 
 	"""
-	 
 }
 
 
@@ -78,7 +82,7 @@ process trimmomatic_SE{
 
     memory "${params.m_mem} GB"
     cpus  params.mtp_cores
-    publishDir path: "$launchDir/${params.WD}/trimmomatic", mode: 'copy'
+    publishDir path: "${params.WD}/trimmomatic", mode: 'copy'
     
     input:
 	path SE_read 
@@ -107,3 +111,5 @@ process trimmomatic_SE{
 """	
 
 }
+
+
