@@ -38,7 +38,7 @@ process fastqc_SE{
 	
 	
     output:
-        path "${fastqc_basename}*html"
+        path "${fastqc_basename}*"
 
 
     script:
@@ -75,6 +75,25 @@ process multiqc{
 	"""
 }
 
+
+
+process fix_ReadName{
+
+        echo true
+	input:
+	     path SE_read
+
+	output:
+	     path SE_read
+shell:
+"""
+     
+     sed -i -e '1~4s/\$/\\/1/g' ${SE_read} 
+     
+
+"""
+
+}
 
 
 
