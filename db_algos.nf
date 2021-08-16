@@ -1,11 +1,11 @@
 #!/usr/bin/env nextflow
 
 
-
-
 process sortmerRNA_SE{
 
-    publishDir path: "${params.WD}/SortmeRNA/${RefName}"
+    
+    tag "$trimmed_fastq_SE"
+    publishDir path: "${params.WD}/SortmeRNA/"
     cpus params.htp_cores
     memory "${params.m_mem} GB"
 
@@ -20,11 +20,27 @@ process sortmerRNA_SE{
 	
     script:
 	SE_mRNA_read =  trimmed_fastq_SE.baseName.replace('trim_','')   
-	SortmeRNA_Reflist = SortmeRNA_Reflist.map{'--ref '+ it }
+        SortmeRNA_Reflist = SortmeRNA_Reflist.collect{'--ref '+ it }.join(' ')
 
+    
 """
-	
-	echo $SortmeRNA_Reflist
+
+    mkdir kvdb
+
+    sortmerna \
+        ${SortmeRNA_Reflist} \
+    	--reads ${trimmed_fastq_SE} \
+    	--aligned ${trimmed_fastq_SE.baseName}_aligned \
+        --kvdb kvdb \
+    	--other mRNA \
+    	--threads ${params.htp_cores} \
+    	--fastx \
+    	-m ${params.h_mem}000 \
+    	--task 4 \
+    	-v 
+
+      mv mRNA.fq ${SE_mRNA_read}.fastq   
+   
     
 """
 //underscores are sometimes removed in read name
@@ -33,22 +49,7 @@ process sortmerRNA_SE{
 
 
 
-    // mkdir kvdb
-
-    // sortmerna \
-    //     --ref ${params.SILVA} \
-    // 	--reads ${trimmed_fastq_SE} \
-    // 	--aligned ${trimmed_fastq_SE.baseName}_aligned \
-    //     --kvdb kvdb \
-    // 	--other mRNA \
-    // 	--threads ${params.htp_cores} \
-    // 	--fastx \
-    // 	-m ${params.h_mem}000 \
-    // 	--task 4 \
-    // 	-v 
-
-    //   mv mRNA.fq ${SE_mRNA_read}.fastq   
-   
+    
 
 
 
