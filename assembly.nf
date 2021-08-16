@@ -12,8 +12,7 @@ process Trinity_SE{
          path "Trinity"
      
 
- 	 
-	   
+ 		   
 """        
 
      Trinity\
