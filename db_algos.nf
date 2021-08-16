@@ -3,8 +3,6 @@
 
 process sortmerRNA_SE{
 
-    
-    tag "$trimmed_fastq_SE"
     publishDir path: "${params.WD}/SortmeRNA/"
     cpus params.htp_cores
     memory "${params.m_mem} GB"
