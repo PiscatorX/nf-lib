@@ -2,8 +2,7 @@
 
 
 process sortmerRNA_SE{
-	
-    
+	    
     cpus params.htp_cores
     memory "${params.m_mem} GB"
     scratch params.scratch_small
@@ -49,10 +48,6 @@ process sortmerRNA_SE{
 
 
 
-    
-
-
-
 process bowtie2_build{
 
     cpus params.htp_cores 
@@ -76,6 +71,8 @@ process bowtie2_build{
 """
 
 }
+
+
 
 
 process bowtie2_SE{
@@ -115,8 +112,6 @@ quick_stats = SE_reads.getSimpleName() + '.quick_stats'
 
 }
 
-//bowtie2 -p 10 -q --no-unal -k 20 -x Trinity.fasta -1 reads_1.fq -2 reads_2.fq  \
-//      2>align_stats.txt| samtools view -@10 -Sb -o bowtie2.bam
 
 
 
