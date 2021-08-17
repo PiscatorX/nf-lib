@@ -2,10 +2,12 @@
 
 
 process sortmerRNA_SE{
-
-    publishDir path: "${params.WD}/SortmeRNA/"
+	
+    
     cpus params.htp_cores
     memory "${params.m_mem} GB"
+    scratch params.scratch_small
+    publishDir path: "${params.WD}/SortmeRNA/"    
 
     input:
 	path trimmed_fastq_SE

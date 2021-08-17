@@ -5,7 +5,6 @@
 process  ubam2fastq{
 
     publishDir "${params.WD}/ubam2fastq/", mode: 'copy'
-    echo true
     input:
 	path uBAM 
 

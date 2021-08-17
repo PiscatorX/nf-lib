@@ -2,8 +2,9 @@ process Trinity_SE{
 
     cpus params.htp_cores
     memory "${params.h_mem} GB"
+    scratch params.scratch_large
     publishDir "$params.WD",  mode: 'move'
-
+    
     input:
 	path trimmed_fastq_SE
 	path sample_file
