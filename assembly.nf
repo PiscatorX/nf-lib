@@ -30,3 +30,39 @@ process Trinity_SE{
 
 }
 
+
+
+process analyze_blastTophits{
+
+    cpus params.mtp_cores 
+    memory "${params.m_mem} GB"    
+    publishDir path: "${DB_path}"
+    input:
+        path blastout_fmt6
+	path denovo_ref
+	path prot_reference
+	
+    output:
+        path "${blastout_fmt6}*" 
+        
+	    
+"""
+
+    analyze_blastPlus_topHit_coverage.pl \
+        ${blastout_fmt6} \
+        ${denovo_ref} \
+        ${prot_reference}  >  ${blastout_fmt6}.coverage
+
+
+    $TRINITY_HOME/util/misc/blast_outfmt6_group_segments.pl \
+        ${blastout_fmt6} \
+        ${denovo_ref} \
+        ${prot_reference}  >  ${blastout_fmt6}.grouped
+
+    $TRINITY_HOME/util/misc/blast_outfmt6_group_segments.tophit_coverage.pl \
+         ${blastout_fmt6}.grouped
+
+	      
+"""
+
+} 

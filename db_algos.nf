@@ -114,6 +114,66 @@ quick_stats = SE_reads.getSimpleName() + '.quick_stats'
 
 
 
+process makeblastdb{
+
+    cpus params.htp_cores 
+    memory "${params.m_mem} GB"    
+    publishDir path: "${DB_path}"
+    input:
+	path fasta_reference
+    	val molecule_type
+	val DB_path
+
+    output:
+	path "${fasta_reference}*"
+
+"""
+
+    makeblastdb \
+        -in ${fasta_reference} \
+        -dbtype ${molecule_type}
+                        		      
+"""
+
+
+} 
+
+
+
+process blast_tophit{
+
+    cpus params.htp_cores 
+    memory "${params.m_mem} GB"    
+    publishDir path: "${params.WD}/Assembly"
+    input:
+	path query_seqs
+	path fasta_reference
+        val DB_path
+    output:
+	path blastout_fmt6
+    
+script:
+db_name =  fasta_reference.getBaseName()   	
+blastout_fmt6 = query_seqs.getSimpleName() + '.blastx'
+"""
+
+    blastx \
+       -query ${query_seqs} \
+       -db  ${DB_path}/${fasta_reference} \
+       -out ${blastout_fmt6} \
+       -evalue 1e-20 \
+       -num_threads ${params.htp_cores} \
+       -max_target_seqs 1\
+       -outfmt 6 
+                   		      
+"""
+
+
+} 
+
+
+
+
 
 
 
