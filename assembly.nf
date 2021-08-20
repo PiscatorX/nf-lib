@@ -32,19 +32,20 @@ process Trinity_SE{
 
 
 
+
 process analyze_blastTophits{
 
-    cpus params.mtp_cores 
-    memory "${params.m_mem} GB"    
-    publishDir path: "${DB_path}"
+    cpus params.ltp_cores 
+    memory "${params.l_mem} GB"    
+    publishDir path: "$params.WD/Assembly",  mode: 'move'
     input:
         path blastout_fmt6
 	path denovo_ref
 	path prot_reference
 	
     output:
-        path "${blastout_fmt6}*" 
-        
+        path "${blastout_fmt6}.*" 
+
 	    
 """
 
@@ -60,7 +61,7 @@ process analyze_blastTophits{
         ${prot_reference}  >  ${blastout_fmt6}.grouped
 
     $TRINITY_HOME/util/misc/blast_outfmt6_group_segments.tophit_coverage.pl \
-         ${blastout_fmt6}.grouped
+         ${blastout_fmt6}.grouped > ${blastout_fmt6}.grouped.coverage
 
 	      
 """
