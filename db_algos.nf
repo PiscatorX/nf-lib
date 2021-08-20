@@ -1,15 +1,18 @@
 #!/usr/bin/env nextflow
 
 
+
+
 process sortmerRNA_SE{
 	    
     cpus params.htp_cores
     memory "${params.m_mem} GB"
     scratch params.scratch_small
-    publishDir path: "${params.WD}/SortmeRNA/"    
-
+    publishDir path: "${params.WD}/SortmeRNA/"
+    
     input:
 	path trimmed_fastq_SE
+	val SortmeRNA_idx_dir 
         val SortmeRNA_Reflist
     
     output:
@@ -23,14 +26,16 @@ process sortmerRNA_SE{
 
     
 """
-
+    
+    mkdir -p "${HOME}/sortmerna/run/"
     mkdir kvdb
-
+    
     sortmerna \
         ${SortmeRNA_Reflist} \
     	--reads ${trimmed_fastq_SE} \
     	--aligned ${trimmed_fastq_SE.baseName}_aligned \
         --kvdb kvdb \
+        --idx-dir  ${SortmeRNA_idx_dir} \
     	--other mRNA \
     	--threads ${params.htp_cores} \
     	--fastx \
@@ -173,7 +178,34 @@ blastout_fmt6 = query_seqs.getSimpleName() + '.blastx'
 
 
 
+process busco_auto_euk{
 
+    cpus params.mtp_cores 
+    memory "${params.m_mem} GB"
+    publishDir path: "${params.WD}"
+    input:
+        path denovo_ref
+    	val species
+
+    output:
+        path "Busco_${denovo_ref}"
+
+
+"""
+  
+    busco \
+        -m transcriptome \
+        -i ${denovo_ref} \
+        --species ${species} \
+        --cpu ${params.mtp_cores} \
+        -o Busco_${denovo_ref} \
+        --download_path ${DB_REF} \
+        --auto-lineage-euk
+        
+
+"""	
+
+}
 
 
 
