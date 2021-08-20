@@ -5,7 +5,7 @@
 
 process sortmerRNA_SE{
 	    
-    cpus params.htp_cores
+    cpus params.mtp_cores
     memory "${params.m_mem} GB"
     scratch params.scratch_small
     publishDir path: "${params.WD}/SortmeRNA/"
@@ -37,7 +37,7 @@ process sortmerRNA_SE{
         --kvdb kvdb \
         --idx-dir  ${SortmeRNA_idx_dir} \
     	--other mRNA \
-    	--threads ${params.htp_cores} \
+    	--threads ${params.mtp_cores} \
     	--fastx \
     	-m ${params.h_mem}000 \
     	--task 4 \
