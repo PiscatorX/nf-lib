@@ -39,7 +39,7 @@ process sortmerRNA_SE{
     	--other mRNA \
     	--threads ${params.mtp_cores} \
     	--fastx \
-    	-m ${params.h_mem}000 \
+    	-m ${params.m_mem}000 \
     	--task 4 \
     	-v 
 
