@@ -26,7 +26,7 @@ process sortmerRNA_SE{
 
     
 """
-    
+
     mkdir -p "${HOME}/sortmerna/run/"
     mkdir kvdb
     
@@ -37,15 +37,14 @@ process sortmerRNA_SE{
         --kvdb kvdb \
         --idx-dir  ${SortmeRNA_idx_dir} \
     	--other mRNA \
-    	--threads ${params.mtp_cores} \
+    	--threads ${params.ltp_cores} \
     	--fastx \
-    	-m ${params.m_mem}000 \
+    	-m ${params.l_mem}000 \
     	--task 4 \
     	-v 
 
       mv mRNA.fq ${SE_mRNA_read}.fastq   
-   
-    
+       
 """
 //underscores are sometimes removed in read name
 }
@@ -55,7 +54,7 @@ process sortmerRNA_SE{
 
 process bowtie2_build{
 
-    cpus params.htp_cores 
+    cpus params.mtp_cores 
     memory "${params.m_mem} GB"    
     publishDir path: "${bt2_index_path}"
     input:
@@ -70,6 +69,7 @@ process bowtie2_build{
 """
 
     bowtie2-build \
+        --threads ${params.mtp_cores} \
 	${fasta_references} \
         ${bt2_index_base}
                         		      
@@ -104,7 +104,7 @@ quick_stats = SE_reads.getSimpleName() + '.quick_stats'
 """
   
    bowtie2 \
-      --threads ${params.htp_cores} \
+      --threads ${params.mtp_cores} \
       -q \
       --no-unal \
       -k 20 \
@@ -147,7 +147,7 @@ process makeblastdb{
 
 process blast_tophit{
 
-    cpus params.htp_cores 
+    cpus params.mtp_cores 
     memory "${params.m_mem} GB"    
     publishDir path: "${params.WD}/Assembly"
     input:
@@ -167,7 +167,7 @@ blastout_fmt6 = query_seqs.getSimpleName() + '.blastx'
        -db  ${DB_path}/${fasta_reference} \
        -out ${blastout_fmt6} \
        -evalue 1e-20 \
-       -num_threads ${params.htp_cores} \
+       -num_threads ${params.mtp_cores} \
        -max_target_seqs 1\
        -outfmt 6 
                    		      
