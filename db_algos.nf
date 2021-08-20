@@ -37,7 +37,7 @@ process sortmerRNA_SE{
         --kvdb kvdb \
         --idx-dir  ${SortmeRNA_idx_dir} \
     	--other mRNA \
-    	--threads ${params.ltp_cores} \
+    	-a ${params.ltp_cores} \
     	--fastx \
     	-m ${params.l_mem}000 \
     	--task 4 \
