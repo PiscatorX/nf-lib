@@ -27,9 +27,10 @@ process  ubam2fastq{
 
 
 
+
 process fastqc_SE{
 
-    publishDir "${params.WD}/fastq_SE/${outdir}"
+    publishDir "${params.WD}/fastqc_SE/${outdir}"
     cpus params.ltp_cores
     input:
     	path SE_reads
@@ -56,6 +57,7 @@ process fastqc_SE{
 
 
 
+
 process multiqc{
 
         publishDir "${params.WD}/multiqc/", mode: 'move' 
@@ -76,9 +78,10 @@ process multiqc{
 
 
 
+
 process fix_ReadName{
 
-        echo true
+        
 	input:
 	     path SE_read
 
@@ -93,6 +96,7 @@ shell:
 """
 
 }
+
 
 
 
@@ -129,5 +133,71 @@ process trimmomatic_SE{
 """	
 
 }
+
+
+
+
+
+process infoseq{
+
+    memory "${params.l_mem} GB"
+    publishDir path: "${params.WD}/infoseq", mode: 'copy'
+    
+    input:
+	path SE_read
+
+    output:
+        path "${read_basename}.infoseq"
+
+    script:
+	read_basename =  SE_read.getSimpleName()
+
+
+"""   
+
+    infoseq \
+        -sequence ${SE_read} \
+        -nocolumn \
+        -delimiter '\t' \
+        -outfile  ${read_basename}.infoseq
+
+"""
+
+}
+
+
+
+
+process infoseq_stats{
+
+    memory "${params.l_mem} GB"
+    publishDir path: "${params.WD}/infoseq", mode: 'copy'
+    
+    input:
+       path infoseq
+
+    output:
+       stdout emit: readlen_stats
+       path "merged_df.tsv"
+
+
+"""   
+#!/usr/bin/env python
+import pandas as pd
+import glob
+import sys
+
+globfiles = glob.glob("*")
+merged_df = pd.concat([ pd.read_csv(tsv, sep ="\t") for tsv  in  globfiles ])
+
+mean = merged_df['Length'].mean()
+std = merged_df['Length'].std()
+sys.stdout.write("{}\t{}".format(mean, std))
+merged_df.to_csv("merged_df.tsv")
+
+"""
+
+}
+
 
 

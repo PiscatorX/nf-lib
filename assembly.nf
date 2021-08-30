@@ -32,7 +32,6 @@ process Trinity_SE{
 
 
 
-
 process analyze_blastTophits{
 
     cpus params.ltp_cores 
@@ -66,4 +65,104 @@ process analyze_blastTophits{
 	      
 """
 
-} 
+}
+
+
+
+process transrate{
+
+    publishDir path: "$params.WD",  mode: 'move'
+    cpus params.htp_cores
+    echo true
+    input:
+        path SE_reads
+	path fasta_reference
+	path genome_ref
+
+    output:
+        path "transrate_results"
+	stdout emit: transrate_stdout
+	
+
+script:
+Left_reads = SE_reads.collect{it }.join(', ')
+
+"""
+
+   transrate \
+       --left ${Left_reads} \
+       --assembly ${fasta_reference} \
+       --threads ${params.htp_cores} \
+       --reference ${genome_ref}
+
+"""
+
+}
+
+
+
+
+process rsem_eval_est{
+
+    publishDir path: "$params.WD/detonate_results",  mode: 'move'
+    cpus params.htp_cores
+    echo true
+    input:
+        path SE_reads
+	path fasta_reference
+	path genome_ref
+
+	
+script:
+Left_reads = SE_reads.collect{it }.join(', ')
+(readlen_mean, readlen_stddev) = readlen_stats.split("\t")
+"""
+
+    rsem-eval-estimate-transcript-length-distribution \
+        ${fasta_reference} \
+        ${readlen_men} \
+        parameter_file   
+
+"""
+
+}
+         
+
+
+
+process rsem_eval{
+
+    publishDir path: "$params.WD/detonate_results",  mode: 'move'
+    cpus params.htp_cores
+    echo true
+    input:
+        path SE_reads
+	path fasta_reference
+	path genome_ref
+	val  readlen_stats
+	
+script:
+SE_reads = SE_reads.collect{it }.join(', ')
+(readlen_mean, readlen_stddev) = readlen_stats.split("\t")
+"""
+
+   rsem-eval-estimate-transcript-length-distribution \
+       ${fasta_reference} \
+       ${fasta_reference.baseName}.txt
+
+   rsem-eval-calculate-score \
+       --num-threads  ${params.htp_cores} \
+       ${SE_reads} \
+       ${fasta_reference} \
+       ${fasta_reference.baseName} \
+       ${readlen_mean} 
+       
+       
+"""
+
+}
+
+
+
+
+

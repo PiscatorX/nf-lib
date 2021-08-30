@@ -56,22 +56,22 @@ process bowtie2_build{
 
     cpus params.mtp_cores 
     memory "${params.m_mem} GB"    
-    publishDir path: "${bt2_index_path}"
+    storeDir "${bt2_index_path}"
     input:
-	path fasta_references
-    	val bt2_index_base
+	path fasta_reference
     	val bt2_index_path
 
     output:
-	path "${bt2_index_base}*"
+	path "${index_basename}*"
 
-
+script:
+index_basename = fasta_reference.getName()
 """
 
     bowtie2-build \
         --threads ${params.mtp_cores} \
-	${fasta_references} \
-        ${bt2_index_base}
+	${fasta_reference} \
+        ${index_basename}
                         		      
 """
 
@@ -79,43 +79,122 @@ process bowtie2_build{
 
 
 
-
 process bowtie2_SE{
 
     cpus params.htp_cores 
     memory "${params.m_mem} GB"
-    publishDir path: "${params.WD}/bowtie2"
+    publishDir path: "${params.WD}/bam/", pattern: "*.bam"
+    publishDir path: "${params.WD}/sam/", pattern: "*.sam"
+    
+    
     input:
         path SE_reads
-	val fasta_references
-	val bt2_index_base
+	path fasta_reference
     	val bt2_index_path
 
     output:
-	 path SAM_file, emit: SAM
-	 path metrics
-	 path quick_stats
+	path SAM_file, emit: SAM
+	path BAM_file, emit: BAM
+	path metrics
+	path quick_stats
 
 script:
 SAM_file =  SE_reads.getSimpleName() + '.sam'
+BAM_file =  SE_reads.getSimpleName() + '.bam'
 metrics = SE_reads.getSimpleName() + '.metrics'
 quick_stats = SE_reads.getSimpleName() + '.quick_stats'
+index_basename = fasta_reference.getName()
 
 """
   
    bowtie2 \
       --threads ${params.mtp_cores} \
-      -q \
-      --no-unal \
-      -k 20 \
-      -x ${bt2_index_path}/${bt2_index_base} \
+      -x ${bt2_index_path}/${index_basename} \
       -U ${SE_reads} \
       -S ${SAM_file} \
       --met-file ${metrics} 2> ${quick_stats} 
-      
+         
+   
+   samtools \
+       view \
+       ${SAM_file} \
+       -F 4 \
+       -b \
+       --threads ${params.mtp_cores} \
+       -o ${BAM_file} 
+            
 """	
 
 }
+
+
+
+
+process bam_index{
+    
+    cpus params.mtp_cores 
+    memory "${params.m_mem} GB"
+    publishDir path: "${params.WD}/indexed_bam/"
+    
+    input:
+        path BAM
+	val fasta_reference
+
+    output:
+        path "${BAM.baseName}*", emit: sorted_BAM
+
+"""
+
+    samtools \
+        sort \
+        ${BAM} \
+        -m "${params.l_mem}G" \
+        --threads  ${params.mtp_cores} \
+        --reference ${fasta_reference} \
+        -o  ${BAM.baseName}_sorted.bam
+
+    samtools \
+        index \
+        ${BAM.baseName}_sorted.bam \
+        -@  ${params.mtp_cores} 
+
+
+"""
+      
+}
+
+
+
+
+process samtools_fasta_ref{
+
+    cpus params.htp_cores
+    memory "${params.m_mem} GB"
+    publishDir "${params.WD}/indexed_bam/"
+
+    input:
+        path fasta_reference
+	val  name
+
+     output:
+        path "*.fai"
+	path "${name}.fasta"
+
+script:
+fname = fasta_reference.getName()
+"""
+   
+    mv ${fname}  ${name}.fasta 	
+
+    samtools \
+       faidx \
+       ${name}.fasta 
+       
+      
+"""
+
+}
+
 
 
 
@@ -145,11 +224,12 @@ process makeblastdb{
 
 
 
+
 process blast_tophit{
 
     cpus params.mtp_cores 
     memory "${params.m_mem} GB"    
-    publishDir path: "${params.WD}/Assembly"
+    storeDir "${DB_REF}/Salmon/"
     input:
 	path query_seqs
 	path fasta_reference
