@@ -73,7 +73,6 @@ process transrate{
 
     publishDir path: "$params.WD",  mode: 'move'
     cpus params.htp_cores
-    echo true
     input:
         path SE_reads
 	path fasta_reference
@@ -106,7 +105,6 @@ process rsem_eval_est{
 
     publishDir path: "$params.WD/detonate_results",  mode: 'move'
     cpus params.htp_cores
-    echo true
     input:
         path SE_reads
 	path fasta_reference
@@ -134,7 +132,7 @@ process rsem_eval{
 
     publishDir path: "$params.WD/detonate_results",  mode: 'move'
     cpus params.htp_cores
-    echo true
+
     input:
         path SE_reads
 	path fasta_reference
@@ -162,6 +160,41 @@ SE_reads = SE_reads.collect{it }.join(', ')
 
 }
 
+
+
+
+process rnaQuast{
+
+    echo true
+    publishDir path: "$params.WD/rnaQuast",  mode: 'move'
+    cpus params.htp_cores
+    input:
+        path SE_reads
+	path fasta_reference
+	path genome_ref
+	val  readlen_stats
+	
+script:
+SE_reads = SE_reads.collect{it }.join(', ')
+(readlen_mean, readlen_stddev) = readlen_stats.split("\t")
+"""
+
+   rnaQUAST.py \
+      -c TRANSCRIPTS [TRANSCRIPTS ...]] [-psl ALIGNMENT [ALIGNMENT ...]]
+                        [-sam READS_ALIGNMENT] [-1 LEFT_READS] [-2 RIGHT_READS] [-s SINGLE_READS] [--gmap_index GMAP_INDEX] [-o OUTPUT_DIR] [--test] [-d] [-t THREADS]
+                        [-l LABELS [LABELS ...]] [-ss] [--min_alignment MIN_ALIGNMENT] [--no_plots] [--blat] [--gene_mark] [--meta] [--lower_threshold LOWER_THRESHOLD]
+                        [--upper_threshold UPPER_THRESHOLD] [--disable_infer_genes] [--disable_infer_transcripts] [--busco BUSCO] [--prokaryote]
+ 
+       
+       
+"""
+
+}
+
+ // /opt/rnaQUAST.py [-h] [-r REFERENCE [REFERENCE ...]] [--gtf GTF [GTF ...]] [--gene_db GENE_DB] [-c TRANSCRIPTS [TRANSCRIPTS ...]] [-psl ALIGNMENT [ALIGNMENT ...]]
+ //                        [-sam READS_ALIGNMENT] [-1 LEFT_READS] [-2 RIGHT_READS] [-s SINGLE_READS] [--gmap_index GMAP_INDEX] [-o OUTPUT_DIR] [--test] [-d] [-t THREADS]
+ //                        [-l LABELS [LABELS ...]] [-ss] [--min_alignment MIN_ALIGNMENT] [--no_plots] [--blat] [--gene_mark] [--meta] [--lower_threshold LOWER_THRESHOLD]
+ //                        [--upper_threshold UPPER_THRESHOLD] [--disable_infer_genes] [--disable_infer_transcripts] [--busco BUSCO] [--prokaryote]
 
 
 
