@@ -5,6 +5,7 @@
 process  ubam2fastq{
 
     publishDir "${params.WD}/ubam2fastq/", mode: 'copy'
+    cpus params.mtp_cores
     input:
 	path uBAM 
 
@@ -15,11 +16,10 @@ process  ubam2fastq{
       fastq =   uBAM.getName().replace('bam','fastq') 
 
     """
-
-       bedtools \
-       		bamtofastq \
-       		-i ${uBAM} \
-		-fq ${fastq}
+       samtools \
+       		fastq \
+                --threads ${params.mtp_cores} \
+       		${uBAM} > ${fastq}
 
     """
 
