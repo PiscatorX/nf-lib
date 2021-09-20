@@ -178,7 +178,7 @@ process infoseq_stats{
 
     output:
        stdout emit: readlen_stats
-       path "merged_df.tsv"
+       path "merged_infoseq.tsv"
 
 
 """   
@@ -187,14 +187,16 @@ import pandas as pd
 import glob
 import sys
 
+
+
+
 globfiles = glob.glob("*")
 merged_df = pd.concat([ pd.read_csv(tsv, sep ="\t") for tsv  in  globfiles ])
 
 mean = merged_df['Length'].mean()
 std = merged_df['Length'].std()
 sys.stdout.write("{}\t{}".format(mean, std))
-merged_df.to_csv("merged_df.tsv",  index = True)
-
+merged_df.to_csv("merged_infoseq.tsv",  index = True)
 """
 
 }
