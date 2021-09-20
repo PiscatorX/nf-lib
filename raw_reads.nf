@@ -81,7 +81,7 @@ process multiqc{
 
 process fix_ReadName{
 
-        
+        publishDir "${params.WD}/FixedReadNames/", mode: 'copy' 
 	input:
 	     path SE_read
 
