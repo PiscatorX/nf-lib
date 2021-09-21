@@ -4,7 +4,7 @@ process transcript_est_alignfree{
 
     cpus params.ltp_cores 
     memory "${params.l_mem} GB"    
-    publishDir path: "$params.WD/${est_method}",  mode: 'move'
+    publishDir path: "$params.WD/${est_method}-quant",  mode: 'move'
     input:
         path trimmed_fastq_SE
         path denovo_ref
@@ -40,10 +40,33 @@ script:
 }
 
 
-   
 
 
+process abundance_estimates_to_matrix{
 
+    echo true
+    publishDir path: "$params.WD/${est_method}-abund-matrix",  mode: 'move'
+    input:
+        path quant_dir
+	val quant_name
+	val est_method
+
+    output:
+        path "${est_method}*"
+
+"""
+
+ find -L . -iname "${quant_name}" -print  >  quant_files
+
+ abundance_estimates_to_matrix.pl \
+    --est_method salmon \
+    --quant_files quant_files \
+    --gene_trans_map none \
+    --name_sample_by_basedir      
+
+"""
+
+}
 
 
 
@@ -78,8 +101,11 @@ salmon_index = reference.getSimpleName()
 
 
 
+
 process salmon_quant{
-    
+//https://github.com/trinityrnaseq/trinityrnaseq/wiki/Trinity-Transcript-Quantification
+
+
     cpus params.mtp_cores
     memory "${params.h_mem} GB"
     publishDir path: "$params.WD/Salmon/", pattern: "${bam.baseName}", mode: 'copy'
@@ -108,8 +134,6 @@ process salmon_quant{
 
     mv ${bam.baseName}/quant.sf  ${bam.baseName}.sf    
 
-"""
-
-	
+"""	
 }
 
