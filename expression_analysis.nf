@@ -4,7 +4,7 @@ process transcript_est_alignfree{
 
     cpus params.ltp_cores 
     memory "${params.l_mem} GB"    
-    publishDir path: "$params.WD/${est_method}-quant",  mode: 'move'
+    publishDir path: "$params.WD/${est_method}-quant",  mode: 'copy'
     input:
         path trimmed_fastq_SE
         path denovo_ref
