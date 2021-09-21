@@ -18,6 +18,7 @@ process transcript_est_alignfree{
 	
 script:
 (readlen_mean, readlen_stddev) = readlen_stats.split("\t")
+
 """
     
    align_and_estimate_abundance.pl \
@@ -44,15 +45,20 @@ script:
 
 process abundance_estimates_to_matrix{
 
-    echo true
-    publishDir path: "$params.WD/${est_method}-abund-matrix",  mode: 'move'
+//https://github.com/trinityrnaseq/trinityrnaseq/wiki/Transcriptome-Contig-Nx-and-ExN50-stats
+
+    cpus params.ltp_cores 
+    memory "${params.l_mem} GB"    
+    publishDir path: "$params.WD/${est_method}-abund-matrix",  mode: 'move'    
     input:
         path quant_dir
+	path denovo_ref
 	val quant_name
 	val est_method
 
     output:
-        path "${est_method}*"
+        path "${est_method}*", emit: matrix_data
+	path "ExN50.stats", emit: ExN50
 
 """
 
@@ -64,8 +70,11 @@ process abundance_estimates_to_matrix{
     --gene_trans_map none \
     --name_sample_by_basedir      
 
-"""
+ contig_ExN50_statistic.pl \
+     ${est_method}.isoform.TMM.EXPR.matrix Trinity.fasta > ExN50.stats
 
+"""
+//cat transcripts.TMM.EXPR.matrix.E-inputs |  egrep -v ^\# | awk '$1 <= 90' | wc -l
 }
 
 
