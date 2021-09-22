@@ -2,7 +2,7 @@
 
 
 
-process  ubam2fastq{
+process  ubam2fastq_SE{
 
     publishDir "${params.WD}/ubam2fastq/", mode: 'copy'
     cpus params.mtp_cores
@@ -74,6 +74,8 @@ process multiqc{
             --filename ${outdir} 
 
 	"""
+
+
 }
 
 
@@ -81,17 +83,24 @@ process multiqc{
 
 process fix_ReadName{
 
+        echo true
+        memory "${params.m_mem} GB"
+        cpus  params.ltp_cores
         publishDir "${params.WD}/FixedReadNames/", mode: 'copy' 
 	input:
-	     path SE_read
+	    path SE_read 
+	    
 
 	output:
 	     path SE_read
-shell:
+
+
+script:
+sed_cmd = " \"sed -e 's/^@\\([A-Z0-9:]\\{17,20\\}\\)\$/&\\/1/g'\" "
 """
-     
-     sed -i -e '1~4s/\$/\\/1/g' ${SE_read} 
-     
+      
+    cat ${SE_read} | parallel -k  --pipe  -j ${params.ltp_cores} ${sed_cmd}  >  tmp.fastq
+
 
 """
 
@@ -200,6 +209,3 @@ merged_df.to_csv("merged_infoseq.tsv",  index = True)
 """
 
 }
-
-
-
