@@ -1,7 +1,6 @@
 
 
 
-
 process  ubam2fastq_SE{
 
     publishDir "${params.WD}/ubam2fastq/", mode: 'copy'
@@ -69,12 +68,11 @@ process multiqc{
              path "${outdir}*"
 
 
-	"""
+"""
             multiqc  . \
             --filename ${outdir} 
 
-	"""
-
+"""
 
 }
 
