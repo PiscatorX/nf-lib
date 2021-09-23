@@ -39,7 +39,7 @@ process sortmerRNA_SE{
     	-a ${params.ltp_cores} \
     	--fastx \
     	-m ${params.l_mem}000 \
-    	--task cpus ${params.mtp_cores} \
+    	--task ${params.mtp_cores} \
     	-v 
 
       mv mRNA.fq ${SE_mRNA_read}.fastq   
