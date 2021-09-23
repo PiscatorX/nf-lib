@@ -15,7 +15,7 @@ process sortmerRNA_SE{
         val SortmeRNA_Reflist
     
     output:
-	path "${trimmed_fastq_SE.baseName}_aligned.fastq"
+	path "${trimmed_fastq_SE.baseName}_aligned.fq"
 	path "${trimmed_fastq_SE.baseName}_aligned.log", emit: sortmerna_log
     	path "${SE_mRNA_read}.fastq", emit: SE_mRNA_read
 	
