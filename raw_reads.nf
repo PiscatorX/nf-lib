@@ -4,6 +4,8 @@
 process  ubam2fastq_SE{
 
     publishDir "${params.WD}/ubam2fastq/", mode: 'copy'
+    params.scratch_small
+    memory "${params.l_mem} GB"
     cpus params.mtp_cores
     input:
 	path uBAM 
@@ -30,6 +32,8 @@ process  ubam2fastq_SE{
 process fastqc_SE{
 
     publishDir "${params.WD}/fastqc_SE/${outdir}"
+    scratch params.scratch_small
+    memory "${params.l_mem} GB"
     cpus params.ltp_cores
     input:
     	path SE_reads
@@ -60,6 +64,9 @@ process fastqc_SE{
 process multiqc{
 
         publishDir "${params.WD}/multiqc/", mode: 'move' 
+        scratch params.scratch_small
+        memory "${params.l_mem} GB"
+        cpus params.ltp_cores
 	input:
 	     path fastqc_html
 	     val outdir
@@ -81,10 +88,10 @@ process multiqc{
 
 process fix_ReadName{
 
-        echo true
+        publishDir "${params.WD}/FixedReadNames/", mode: 'copy' 
+        scratch params.scratch_small
         memory "${params.m_mem} GB"
         cpus  params.ltp_cores
-        publishDir "${params.WD}/FixedReadNames/", mode: 'copy' 
 	input:
 	    path SE_read 
 	    
@@ -108,11 +115,11 @@ sed_cmd = " \"sed -e 's/^@\\([A-Z0-9:]\\{17,20\\}\\)\$/&\\/1/g'\" "
 
 
 process trimmomatic_SE{
-
+  
+    publishDir path: "${params.WD}/trimmomatic", mode: 'copy'
+    scratch params.scratch_small
     memory "${params.m_mem} GB"
     cpus  params.mtp_cores
-    publishDir path: "${params.WD}/trimmomatic", mode: 'copy'
-    
     input:
 	path SE_read 
 
@@ -147,9 +154,10 @@ process trimmomatic_SE{
 
 process infoseq{
 
-    memory "${params.l_mem} GB"
     publishDir path: "${params.WD}/infoseq", mode: 'copy'
-    
+    scratch params.scratch_small
+    memory "${params.l_mem} GB"
+    cpus  params.ltp_cores
     input:
 	path SE_read
 
@@ -177,9 +185,11 @@ process infoseq{
 
 process infoseq_stats{
 
-    memory "${params.l_mem} GB"
-    publishDir path: "${params.WD}/infoseq", mode: 'copy'
     
+    publishDir path: "${params.WD}/infoseq", mode: 'copy'
+    scratch params.scratch_small
+    cpus  params.ltp_cores
+    memory "${params.l_mem} GB"    
     input:
        path infoseq
 

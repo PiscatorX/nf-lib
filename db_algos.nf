@@ -4,12 +4,11 @@
 
 
 process sortmerRNA_SE{
-	    
+
+    publishDir path: "${params.WD}/SortmeRNA/"
     cpus params.mtp_cores
     memory "${params.m_mem} GB"
     scratch params.scratch_small
-    publishDir path: "${params.WD}/SortmeRNA/"
-    
     input:
 	path trimmed_fastq_SE
 	val SortmeRNA_idx_dir 
@@ -40,7 +39,7 @@ process sortmerRNA_SE{
     	-a ${params.ltp_cores} \
     	--fastx \
     	-m ${params.l_mem}000 \
-    	--task 4 \
+    	--task cpus ${params.mtp_cores} \
     	-v 
 
       mv mRNA.fq ${SE_mRNA_read}.fastq   
@@ -54,9 +53,10 @@ process sortmerRNA_SE{
 
 process bowtie2_build{
 
-    cpus params.mtp_cores 
-    memory "${params.m_mem} GB"    
     storeDir "${bt2_index_path}"
+    scratch params.scratch_small
+    memory "${params.m_mem} GB"
+    cpus params.mtp_cores 
     input:
 	path fasta_reference
     	val bt2_index_path
@@ -81,10 +81,11 @@ index_basename = fasta_reference.getName()
 
 process bowtie2_SE{
 
-    cpus params.htp_cores 
-    memory "${params.m_mem} GB"
     publishDir path: "${params.WD}/bam/", pattern: "*.bam"
     publishDir path: "${params.WD}/sam/", pattern: "*.sam"
+    scratch params.scratch_small
+    memory "${params.m_mem} GB"
+    cpus params.htp_cores     
     
     
     input:
@@ -131,11 +132,12 @@ index_basename = fasta_reference.getName()
 
 
 process bam_index{
-    
-    cpus params.mtp_cores 
-    memory "${params.m_mem} GB"
+
     publishDir path: "${params.WD}/indexed_bam/"
-    
+    scratch params.scratch_small
+    memory "${params.m_mem} GB"
+    cpus params.mtp_cores 
+       
     input:
         path BAM
 	val fasta_reference
@@ -168,9 +170,10 @@ process bam_index{
 
 process samtools_fasta_ref{
 
-    cpus params.htp_cores
-    memory "${params.m_mem} GB"
     publishDir "${params.WD}/indexed_bam/"
+    scratch params.scratch_small
+    memory "${params.m_mem} GB"
+    cpus params.htp_cores
 
     input:
         path fasta_reference
@@ -200,9 +203,10 @@ fname = fasta_reference.getName()
 
 process makeblastdb{
 
-    cpus params.htp_cores 
-    memory "${params.m_mem} GB"    
     publishDir path: "${DB_path}"
+    scratch params.scratch_small
+    memory "${params.m_mem} GB"
+    cpus params.htp_cores
     input:
 	path fasta_reference
     	val molecule_type
@@ -227,9 +231,11 @@ process makeblastdb{
 
 process blast_tophit{
 
-    cpus params.mtp_cores 
-    memory "${params.m_mem} GB"    
-    storeDir "${DB_REF}/Salmon/"
+    publishDir "${params.WD}/Blast_top_hits/"
+    scratch params.scratch_small
+    memory "${params.m_mem} GB"
+    cpus params.mtp_cores
+    
     input:
 	path query_seqs
 	path fasta_reference
@@ -260,9 +266,11 @@ blastout_fmt6 = query_seqs.getSimpleName() + '.blastx'
 
 process busco_auto_euk{
 
-    cpus params.mtp_cores 
-    memory "${params.m_mem} GB"
     publishDir path: "${params.WD}"
+    scratch params.scratch_small
+    memory "${params.m_mem} GB"
+    cpus params.mtp_cores
+    
     input:
         path denovo_ref
     	val species

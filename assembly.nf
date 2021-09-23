@@ -34,7 +34,8 @@ process Trinity_SE{
 
 process analyze_blastTophits{
 
-    cpus params.ltp_cores 
+    cpus params.ltp_cores
+    scratch params.scratch_small
     memory "${params.l_mem} GB"    
     publishDir path: "$params.WD/Assembly",  mode: 'move'
     input:
@@ -72,6 +73,7 @@ process analyze_blastTophits{
 process transrate{
 
     publishDir path: "$params.WD",  mode: 'move'
+    params.scratch_small
     cpus params.htp_cores
     input:
         path SE_reads
