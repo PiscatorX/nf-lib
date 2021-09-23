@@ -15,7 +15,7 @@ process sortmerRNA_SE{
         val SortmeRNA_Reflist
     
     output:
-	path "${trimmed_fastq_SE.baseName}_aligned*"
+	path "${trimmed_fastq_SE.baseName}_aligned.fastq"
 	path "${trimmed_fastq_SE.baseName}_aligned.log", emit: sortmerna_log
     	path "${SE_mRNA_read}.fastq", emit: SE_mRNA_read
 	
@@ -32,7 +32,7 @@ process sortmerRNA_SE{
     sortmerna \
         ${SortmeRNA_Reflist} \
     	--reads ${trimmed_fastq_SE} \
-    	--aligned ${trimmed_fastq_SE.baseName}_aligned \
+    	--aligned ${trimmed_fastq_SE.baseName}_aligned.fastq \
         --kvdb kvdb \
         --idx-dir  ${SortmeRNA_idx_dir} \
     	--other mRNA \
