@@ -8,14 +8,13 @@ process sortmerRNA_SE{
     publishDir path: "${params.WD}/SortmeRNA/"
     cpus params.mtp_cores
     memory "${params.m_mem} GB"
-    scratch params.scratch_small
     input:
 	path trimmed_fastq_SE
 	val SortmeRNA_idx_dir 
         val SortmeRNA_Reflist
     
     output:
-	path "${trimmed_fastq_SE.baseName}_aligned*"
+	path "*_aligned_0.fq", emit: rRNA_reads
 	path "${trimmed_fastq_SE.baseName}_aligned.log", emit: sortmerna_log
     	path "${SE_mRNA_read}.fastq", emit: SE_mRNA_read
 	
@@ -23,7 +22,7 @@ process sortmerRNA_SE{
 	SE_mRNA_read =  trimmed_fastq_SE.baseName.replace('trim_','')   
         SortmeRNA_Reflist = SortmeRNA_Reflist.collect{'--ref '+ it }.join(' ')
 
-    
+
 """
 
     mkdir -p "${HOME}/sortmerna/run/"
@@ -32,18 +31,18 @@ process sortmerRNA_SE{
     sortmerna \
         ${SortmeRNA_Reflist} \
     	--reads ${trimmed_fastq_SE} \
-    	--aligned ${trimmed_fastq_SE.baseName}_aligned.fastq \
         --kvdb kvdb \
         --idx-dir  ${SortmeRNA_idx_dir} \
     	--other mRNA \
     	--threads ${params.mtp_cores} \
     	--fastx \
-    	-m ${params.l_mem}000 \
-    	--out2 \
+    	-m ${params.m_mem}000 \
+        --task 4\
+        --aligned ${trimmed_fastq_SE.baseName}_aligned  \
     	-v 
 
       mv mRNA.fq ${SE_mRNA_read}.fastq   
-       
+         
 """
 //underscores are sometimes removed in read name
 }
