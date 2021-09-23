@@ -36,10 +36,10 @@ process sortmerRNA_SE{
         --kvdb kvdb \
         --idx-dir  ${SortmeRNA_idx_dir} \
     	--other mRNA \
-    	-a ${params.ltp_cores} \
+    	-a ${params.mtp_cores} \
     	--fastx \
     	-m ${params.l_mem}000 \
-    	--task ${params.mtp_cores} \
+    	--task 4 \
     	-v 
 
       mv mRNA.fq ${SE_mRNA_read}.fastq   
