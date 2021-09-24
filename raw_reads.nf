@@ -213,7 +213,7 @@ merged_df = pd.concat([ pd.read_csv(tsv, sep ="\t") for tsv  in  globfiles ])
 mean = merged_df['Length'].mean()
 std = merged_df['Length'].std()
 sys.stdout.write("{}\t{}".format(mean, std))
-merged_df.to_csv("merged_infoseq.tsv",  index = True)
+merged_df.to_csv("merged_infoseq.tsv", sep = "\t",  index = False)
 """
 
 }
