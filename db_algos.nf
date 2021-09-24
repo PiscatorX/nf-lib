@@ -36,7 +36,6 @@ process sortmerRNA_SE{
     	--other mRNA \
     	--threads ${params.mtp_cores} \
     	--fastx \
-    	-m ${params.m_mem}000 \
         --task 4\
         --aligned ${trimmed_fastq_SE.baseName}_aligned  \
     	-v 
