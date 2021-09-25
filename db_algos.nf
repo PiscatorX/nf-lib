@@ -77,11 +77,13 @@ index_basename = fasta_reference.getName()
 
 
 
+
 process bowtie2_SE{
 
     publishDir "${params.WD}/bam/", pattern: "*.bam"
     publishDir "${params.WD}/sam/", pattern: "*.sam"
-    publishDir "${params.WD}/sam-stats/"
+    publishDir "${params.WD}/samtools-quick_stats/", pattern: "*.quick_stats"
+    publishDir "${params.WD}/samtools-metrics/", pattern: "*.metrics"
     scratch params.scratch_small
     memory "${params.m_mem} GB"
     cpus params.htp_cores     
