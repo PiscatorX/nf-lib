@@ -134,7 +134,7 @@ index_basename = fasta_reference.getName()
 
 process bam_index{
 
-    publishDir path: "${params.WD}/indexed_bam/"
+    publishDir path: "${params.WD}/indexed_bam/", mode: "move"
     scratch params.scratch_small
     memory "${params.m_mem} GB"
     cpus params.mtp_cores 
@@ -169,9 +169,39 @@ process bam_index{
 
 
 
-process samtools_fasta_ref{
 
-    publishDir "${params.WD}/indexed_bam/"
+process bam_flagstat{
+
+    echo true
+    publishDir "${params.WD}/bam_flagstats/", mode: "move" 
+    scratch params.scratch_small
+    memory "${params.m_mem} GB"
+    cpus params.mtp_cores 
+       
+    input:
+        path BAM
+
+    output:
+        path "${BAM.baseName}*", emit: BAM
+
+"""
+
+    samtools \
+        flagstat \
+        ${BAM} \
+        --threads  ${params.mtp_cores} \
+        -O tsv >  ${BAM.baseName}.flagstat
+
+""" 
+     
+}
+
+
+
+
+process samtools_index{
+
+    storeDir path: "${DB_path}"
     scratch params.scratch_small
     memory "${params.m_mem} GB"
     cpus params.htp_cores
@@ -181,7 +211,7 @@ process samtools_fasta_ref{
 	val  name
 
      output:
-        path "*.fai"
+        path "*.fai", emit: samtools_index
 	path "${name}.fasta"
 
 script:
@@ -204,7 +234,7 @@ fname = fasta_reference.getName()
 
 process makeblastdb{
 
-    publishDir path: "${DB_path}"
+    storeDir path: "${DB_path}"
     scratch params.scratch_small
     memory "${params.m_mem} GB"
     cpus params.htp_cores
@@ -232,7 +262,7 @@ process makeblastdb{
 
 process blast_tophit{
 
-    publishDir "${params.WD}/Blast_top_hits/"
+    publishDir "${params.WD}/Blast_top_hits/",  mode: 'move'
     scratch params.scratch_small
     memory "${params.m_mem} GB"
     cpus params.mtp_cores
@@ -267,7 +297,7 @@ blastout_fmt6 = query_seqs.getSimpleName() + '.blastx'
 
 process busco_auto_euk{
 
-    publishDir path: "${params.WD}"
+    publishDir path: "${params.WD}",  mode: 'move'
     scratch params.scratch_small
     memory "${params.m_mem} GB"
     cpus params.mtp_cores
@@ -295,8 +325,3 @@ process busco_auto_euk{
 """	
 
 }
-
-
-
-
-
