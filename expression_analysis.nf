@@ -4,7 +4,7 @@ process transcript_est_alignfree{
 
     cpus params.ltp_cores 
     memory "${params.l_mem} GB"    
-    publishDir path: "$params.WD/${est_method}-quant",  mode: 'copy'
+    publishDir path: "$params.WD/trinity-${est_method}-transcript-est",  mode: 'copy'
     input:
         path trimmed_fastq_SE
         path denovo_ref
@@ -49,7 +49,7 @@ process abundance_estimates_to_matrix{
 
     cpus params.ltp_cores 
     memory "${params.l_mem} GB"    
-    publishDir path: "$params.WD/${est_method}-abund-matrix",  mode: 'move'    
+    publishDir path: "$params.WD/trinity-${est_method}-abund-matrix",  mode: 'move'    
     input:
         path quant_dir
 	path denovo_ref
