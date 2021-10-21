@@ -145,4 +145,3 @@ process salmon_quant{
 
 """	
 }
-
