@@ -61,7 +61,7 @@ process bowtie2_build{
 
     output:
 	path "${index_basename}*"
-
+	val bt2_index_path, emit: bt2_index_path
 script:
 index_basename = fasta_reference.getName()
 """
@@ -201,7 +201,7 @@ process bam_flagstat{
 
 process samtools_index{
 
-    storeDir path: "${DB_path}"
+    storeDir "${DB_path}"
     scratch params.scratch_small
     memory "${params.m_mem} GB"
     cpus params.htp_cores
@@ -232,30 +232,31 @@ fname = fasta_reference.getName()
 
 
 
-process makeblastdb{
+process makeBlastDB{
 
-    storeDir path: "${DB_path}"
+    storeDir "${DB_path}"
     scratch params.scratch_small
     memory "${params.m_mem} GB"
     cpus params.htp_cores
     input:
 	path fasta_reference
-    	val molecule_type
+	val molecule_type
 	val DB_path
 
     output:
 	path "${fasta_reference}*"
 
 """
-
-    makeblastdb \
+ 
+    makeblastdb  \
         -in ${fasta_reference} \
         -dbtype ${molecule_type}
-                        		      
+
+                            		      
 """
 
 
-} 
+}
 
 
 
@@ -265,12 +266,13 @@ process blast_tophit{
     publishDir "${params.WD}/Blast_top_hits/",  mode: 'move'
     scratch params.scratch_small
     memory "${params.m_mem} GB"
-    cpus params.mtp_cores
+    cpus params.htp_cores
     
     input:
 	path query_seqs
 	path fasta_reference
         val DB_path
+	val evalue
     output:
 	path blastout_fmt6
     
@@ -283,9 +285,9 @@ blastout_fmt6 = query_seqs.getSimpleName() + '.blastx'
        -query ${query_seqs} \
        -db  ${DB_path}/${fasta_reference} \
        -out ${blastout_fmt6} \
-       -evalue 1e-20 \
-       -num_threads ${params.mtp_cores} \
-       -max_target_seqs 1\
+       -evalue ${evalue}  \
+       -num_threads ${params.htp_cores} \
+       -max_target_seqs 1 \
        -outfmt 6 
                    		      
 """
