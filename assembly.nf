@@ -164,7 +164,7 @@ process rsem_eval{
 	val  readlen_stats
 	
 script:
-SE_reads = SE_reads.collect{it }.join(', ')
+SE_reads = SE_reads.collect{it }.join(',')
 (readlen_mean, readlen_stddev) = readlen_stats.split("\t")
 """
 
@@ -173,7 +173,8 @@ SE_reads = SE_reads.collect{it }.join(', ')
        ${fasta_reference.baseName}.txt
 
    rsem-eval-calculate-score \
-       --num-threads  ${params.htp_cores} \
+       -p ${params.htp_cores} \
+       --transcript-length-parameters ${fasta_reference.baseName}.txt \
        ${SE_reads} \
        ${fasta_reference} \
        ${fasta_reference.baseName} \
