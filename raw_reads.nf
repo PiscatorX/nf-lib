@@ -1,4 +1,4 @@
-
+ 
 
 
 process  ubam2fastq_SE{
@@ -185,7 +185,7 @@ process infoseq{
 
 process infoseq_stats{
 
-    
+   
     publishDir path: "${params.WD}/infoseq", mode: 'copy'
     scratch params.scratch_small
     cpus  params.ltp_cores
@@ -212,7 +212,7 @@ merged_df = pd.concat([ pd.read_csv(tsv, sep ="\t") for tsv  in  globfiles ])
 
 mean = merged_df['Length'].mean()
 std = merged_df['Length'].std()
-sys.stdout.write("{}\t{}".format(mean, std))
+sys.stdout.write("{:.0f}\t{:.0f}".format(mean, std))
 merged_df.to_csv("merged_infoseq.tsv", sep = "\t",  index = False)
 """
 
