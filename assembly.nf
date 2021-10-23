@@ -11,7 +11,7 @@ process Trinity_SE{
 	
     output:
          path "Trinity"
-     
+	 path "Trinity/Trinity.fasta", emit: assembly    
 
  		   
 """        
@@ -23,12 +23,33 @@ process Trinity_SE{
 	 --CPU ${params.htp_cores} \
 	 --output Trinity \
 	 --verbose
-     
-    TrinityStats.pl Trinity/Trinity.fasta > Trinity/Assembly.stats
-   
+
 """
 
 }
+
+
+
+process assembly_stats{
+
+    cpus params.ltp_cores
+    memory "${params.l_mem} GB"
+    publishDir "$params.WD/Trinity",  mode: 'move'
+    
+    input:
+	path assembly
+	
+    output:
+         path "Assembly.stats"
+	 
+"""
+
+   TrinityStats.pl ${assembly} > Assembly.stats
+
+"""
+
+}
+
 
 
 
@@ -72,17 +93,18 @@ process analyze_blastTophits{
 
 process transrate{
 
-    publishDir path: "$params.WD",  mode: 'move'
+    echo true
+    publishDir path: "$params.WD/Transrate",  mode: 'move'
     params.scratch_small
     cpus params.htp_cores
     input:
         path SE_reads
-	path fasta_reference
-	path genome_ref
+	val fasta_reference
+	val genome_ref
 
     output:
         path "transrate_results"
-	stdout emit: transrate_stdout
+	path "transrate_stdout"
 	
 
 script:
@@ -90,15 +112,19 @@ Left_reads = SE_reads.collect{it }.join(', ')
 
 """
 
-   transrate \
-       --left ${Left_reads} \
-       --assembly ${fasta_reference} \
-       --threads ${params.htp_cores} \
-       --reference ${genome_ref}
+    transrate \
+	--left ${Left_reads} \
+        --right ${Left_reads} \
+	--assembly ${fasta_reference} \
+	--threads ${params.htp_cores} \
+	--reference ${genome_ref}  > transrate_stdout
 
 """
 
 }
+
+
+
 
 
 
@@ -126,7 +152,7 @@ Left_reads = SE_reads.collect{it }.join(', ')
 """
 
 }
-         
+
 
 
 
@@ -180,24 +206,17 @@ script:
 SE_reads = SE_reads.collect{it }.join(', ')
 (readlen_mean, readlen_stddev) = readlen_stats.split("\t")
 """
-
-   rnaQUAST.py \
-      -c TRANSCRIPTS [TRANSCRIPTS ...]] [-psl ALIGNMENT [ALIGNMENT ...]]
-                        [-sam READS_ALIGNMENT] [-1 LEFT_READS] [-2 RIGHT_READS] [-s SINGLE_READS] [--gmap_index GMAP_INDEX] [-o OUTPUT_DIR] [--test] [-d] [-t THREADS]
-                        [-l LABELS [LABELS ...]] [-ss] [--min_alignment MIN_ALIGNMENT] [--no_plots] [--blat] [--gene_mark] [--meta] [--lower_threshold LOWER_THRESHOLD]
-                        [--upper_threshold UPPER_THRESHOLD] [--disable_infer_genes] [--disable_infer_transcripts] [--busco BUSCO] [--prokaryote]
- 
-       
+x
+    rnaQUAST.py \
+        --transcripts TRANSCRIPTS \
+        --reference REFERENCE \
+        --gtf GENE_COORDINATES
+   
        
 """
 
 }
 
- // /opt/rnaQUAST.py [-h] [-r REFERENCE [REFERENCE ...]] [--gtf GTF [GTF ...]] [--gene_db GENE_DB] [-c TRANSCRIPTS [TRANSCRIPTS ...]] [-psl ALIGNMENT [ALIGNMENT ...]]
- //                        [-sam READS_ALIGNMENT] [-1 LEFT_READS] [-2 RIGHT_READS] [-s SINGLE_READS] [--gmap_index GMAP_INDEX] [-o OUTPUT_DIR] [--test] [-d] [-t THREADS]
- //                        [-l LABELS [LABELS ...]] [-ss] [--min_alignment MIN_ALIGNMENT] [--no_plots] [--blat] [--gene_mark] [--meta] [--lower_threshold LOWER_THRESHOLD]
- //                        [--upper_threshold UPPER_THRESHOLD] [--disable_infer_genes] [--disable_infer_transcripts] [--busco BUSCO] [--prokaryote]
-
-
+ 
 
 
