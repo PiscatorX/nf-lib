@@ -114,7 +114,6 @@ Left_reads = SE_reads.collect{it }.join(', ')
 
     transrate \
 	--left ${Left_reads} \
-        --right ${Left_reads} \
 	--assembly ${fasta_reference} \
 	--threads ${params.htp_cores} \
 	--reference ${genome_ref}  > transrate_stdout
@@ -122,9 +121,6 @@ Left_reads = SE_reads.collect{it }.join(', ')
 """
 
 }
-
-
-
 
 
 
@@ -206,7 +202,7 @@ script:
 SE_reads = SE_reads.collect{it }.join(', ')
 (readlen_mean, readlen_stddev) = readlen_stats.split("\t")
 """
-x
+
     rnaQUAST.py \
         --transcripts TRANSCRIPTS \
         --reference REFERENCE \
