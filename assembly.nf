@@ -125,33 +125,6 @@ Left_reads = SE_reads.collect{it }.join(', ')
 
 
 
-process rsem_eval_est{
-
-    publishDir path: "$params.WD/detonate_results",  mode: 'move'
-    cpus params.htp_cores
-    input:
-        path SE_reads
-	path fasta_reference
-	path genome_ref
-
-	
-script:
-Left_reads = SE_reads.collect{it }.join(', ')
-(readlen_mean, readlen_stddev) = readlen_stats.split("\t")
-"""
-
-    rsem-eval-estimate-transcript-length-distribution \
-        ${fasta_reference} \
-        ${readlen_men} \
-        parameter_file   
-
-"""
-
-}
-
-
-
-
 process rsem_eval{
 
     publishDir path: "$params.WD/detonate_results",  mode: 'move'
@@ -199,7 +172,6 @@ process rnaQuast{
 	val  gtf
 	
 script:
-(readlen_mean, readlen_stddev) = readlen_stats.split("\t")
 """
     rnaQUAST.py \
         --transcripts ${fasta_reference} \
