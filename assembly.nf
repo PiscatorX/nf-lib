@@ -205,10 +205,9 @@ SE_reads = SE_reads.collect{it }.join(', ')
 """
 
     rnaQUAST.py \
-        --transcripts TRANSCRIPTS \
-        --reference REFERENCE \
-        --gtf GENE_COORDINATES
-   
+        --transcripts ${fasta_reference} \
+        --reference ${genome_ref} \
+        --gtf ${gtf}   
        
 """
 
