@@ -194,16 +194,13 @@ process rnaQuast{
     publishDir path: "$params.WD/rnaQuast",  mode: 'move'
     cpus params.htp_cores
     input:
-        path SE_reads
 	path fasta_reference
 	path genome_ref
-	val  readlen_stats
+	val  gtf
 	
 script:
-SE_reads = SE_reads.collect{it }.join(', ')
 (readlen_mean, readlen_stddev) = readlen_stats.split("\t")
 """
-
     rnaQUAST.py \
         --transcripts ${fasta_reference} \
         --reference ${genome_ref} \
