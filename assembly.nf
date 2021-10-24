@@ -167,16 +167,24 @@ process rnaQuast{
     publishDir path: "$params.WD/rnaQuast",  mode: 'move'
     cpus params.htp_cores
     input:
+        path SE_reads
 	path fasta_reference
 	path genome_ref
 	val  gtf
 	
 script:
 """
+ 
+    ls  -1 *.fastq > fqlist
+ 
     rnaQUAST.py \
+        --single_reads fqlist \
         --transcripts ${fasta_reference} \
         --reference ${genome_ref} \
-        --gtf ${gtf}   
+        --threads ${params.mtp_cores} \
+        --gtf ${gtf} \
+        --output_dir rnaQUAST
+   
        
 """
 
