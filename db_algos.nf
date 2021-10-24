@@ -317,7 +317,6 @@ process busco_auto_euk{
     busco \
         -m transcriptome \
         -i ${denovo_ref} \
-        --species ${species} \
         --cpu ${params.mtp_cores} \
         -o Busco_${denovo_ref} \
         --download_path ${DB_REF} \
