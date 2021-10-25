@@ -306,7 +306,6 @@ process busco_auto_euk{
     
     input:
         path denovo_ref
-    	val species
 
     output:
         path "Busco_${denovo_ref}"
