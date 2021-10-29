@@ -1,7 +1,6 @@
 process transdecoder{
 
-    echo true
-    publishDir path: "${params.WD}/transcoder/"
+    publishDir path: "${params.WD}/transcoder/", mode: 'copy'
     cpus  params.mtp_cores
     memory "${params.m_mem} GB"
     input:
