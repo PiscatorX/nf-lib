@@ -245,6 +245,7 @@ process makeBlastDB{
 
     output:
 	path "${fasta_reference}*"
+	val DB_path, emit:DB_path
 
 """
  
