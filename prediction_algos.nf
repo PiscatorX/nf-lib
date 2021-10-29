@@ -1,8 +1,7 @@
-
 process transdecoder{
 
     echo true
-    publishDir path: "${params.WD}/SortmeRNA/"
+    publishDir path: "${params.WD}/transcoder/"
     cpus  params.mtp_cores
     memory "${params.m_mem} GB"
     input:
@@ -12,6 +11,12 @@ process transdecoder{
 	val PfamA_hmm
 	
     output:
+        path "${denovo_ref}*.pep", emit: pep
+	path "${denovo_ref}*"
+        path "transdecoder*"
+	path "blastp.outfmt6"
+	path "pfam.domtblout"
+	
 
 """
 
