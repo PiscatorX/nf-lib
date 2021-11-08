@@ -9,7 +9,8 @@ process transdecoder{
 	val swissprot_path
 	val PfamA_hmm
 	val evalue
-	
+	val min_len
+
     output:
         path "${denovo_ref}*.pep", emit: pep
 	path "${denovo_ref}*"
@@ -22,7 +23,9 @@ process transdecoder{
 
     TransDecoder.LongOrfs \
         -t ${denovo_ref} \
+        -m ${min_len} \
         --output_dir transdecoder
+
 
     blastp \
         -query transdecoder/longest_orfs.pep  \
@@ -34,6 +37,7 @@ process transdecoder{
 
     hmmscan \
         --cpu ${params.mtp_cores} \
+        --domE ${evalue} \
         --domtblout pfam.domtblout \
         ${PfamA_hmm} \
         transdecoder/longest_orfs.pep
