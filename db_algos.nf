@@ -326,3 +326,40 @@ process busco_auto_euk{
 """	
 
 }
+
+
+
+
+process hmmscan{
+
+
+    publishDir path: "${params.WD}/hmmscan/${pep.baseName}",  mode: 'move'
+    scratch params.scratch_small
+    memory "${params.m_mem} GB"
+    cpus params.mtp_cores
+    
+    input:
+         path pep
+	 val PfamA_hmm
+	 
+    output:
+        path "${pep.baseName}.domtblout"
+
+
+"""
+    
+   hmmscan \
+        --cpu ${params.mtp_cores} \
+        --domtblout ${pep.baseName}.domtblout \
+        ${PfamA_hmm} \
+        ${pep}
+
+        
+
+"""	
+
+
+
+
+
+}
