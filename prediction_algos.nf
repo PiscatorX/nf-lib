@@ -1,6 +1,6 @@
 process transdecoder{
 
-    publishDir path: "${params.WD}/transcoder/", mode: 'copy'
+    publishDir path: "${params.WD}/transdcoder/", mode: 'copy'
     cpus  params.mtp_cores
     memory "${params.m_mem} GB"
     input:
