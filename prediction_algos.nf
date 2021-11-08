@@ -8,6 +8,7 @@ process transdecoder{
 	path swissprot
 	val swissprot_path
 	val PfamA_hmm
+	val evalue
 	
     output:
         path "${denovo_ref}*.pep", emit: pep
@@ -28,7 +29,7 @@ process transdecoder{
 	-db ${swissprot_path}/${swissprot} \
         -max_target_seqs 1 \
         -outfmt 6 \
-        -evalue 1e-5 \
+        -evalue ${evalue} \
         -num_threads ${params.mtp_cores}  > blastp.outfmt6
 
     hmmscan \
