@@ -365,7 +365,7 @@ process hmmscan{
 process  star{
 
     publishDir "${params.WD}/STAR/bam/", pattern: "*.bam"
-    publishDir "${params.WD}/STAR/bam/", pattern: "*.bam"
+    publishDir "${params.WD}/STAR/${basename}/", pattern: "*.bam"
     scratch params.scratch_large
     memory "${params.m_mem} GB"
     cpus params.mtp_cores     
@@ -378,20 +378,26 @@ process  star{
 
     output:
 	path BAM_file, emit: BAM
+	path "*.out"
+	path "*.tab"
+	path "_STARgenome"
 
 
 script:
-BAM_file =  SE_reads.getSimpleName() + '.bam'
+basename = SE_reads.getSimpleName()
+BAM_file =  basename + '.bam'
 
 """
 
    STAR \
-   --runMode alignReads \
-   --runThreadN ${params.mtp_cores} \
-   --genomeDir ${star_index_path} \
-   --sjdbGTFfile ${gtt} \
-   --readFilesIn ${SE_reads}
-               
+      --runMode alignReads \
+      --runThreadN ${params.mtp_cores} \
+      --genomeDir ${star_index_path} \
+      --sjdbGTFfile ${gtt} \
+      --readFilesIn ${SE_reads} \
+      --outSAMtype BAM \
+      --outFileNamePrefix ${basename}
+
 """	
 
 }
