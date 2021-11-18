@@ -354,12 +354,44 @@ process hmmscan{
         ${PfamA_hmm} \
         ${pep}
 
-        
-
+       
 """	
 
 
+}
 
 
+
+process  star{
+
+    publishDir "${params.WD}/STAR/bam/", pattern: "*.bam"
+    publishDir "${params.WD}/STAR/bam/", pattern: "*.bam"
+    scratch params.scratch_large
+    memory "${params.m_mem} GB"
+    cpus params.mtp_cores     
+    
+    
+    input:
+        path SE_reads
+    	val star_index_path
+	path gtf
+
+    output:
+	path BAM_file, emit: BAM
+
+
+script:
+BAM_file =  SE_reads.getSimpleName() + '.bam'
+
+"""
+
+   STAR \
+   --runMode alignReads \
+   --runThreadN ${params.mtp_cores} \
+   --genomeDir ${star_index_path} \
+   --sjdbGTFfile ${gtt} \
+   --readFilesIn ${SE_reads}
+               
+"""	
 
 }
