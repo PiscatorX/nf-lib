@@ -393,7 +393,7 @@ BAM_file =  basename + '.bam'
       --runMode alignReads \
       --runThreadN ${params.mtp_cores} \
       --genomeDir ${star_index_path} \
-      --sjdbGTFfile ${gtt} \
+      --sjdbGTFfile ${gtf} \
       --readFilesIn ${SE_reads} \
       --outSAMtype BAM \
       --outFileNamePrefix ${basename}
