@@ -395,7 +395,7 @@ BAM_file =  basename + '.bam'
       --genomeDir ${star_index_path} \
       --sjdbGTFfile ${gtf} \
       --readFilesIn ${SE_reads} \
-      --outSAMtype BAM \
+      --outSAMtype BAM SortedByCoordinate \
       --outFileNamePrefix ${basename}
 
 """	
