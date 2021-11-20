@@ -86,7 +86,7 @@ process bowtie2_SE{
     publishDir "${params.WD}/samtools-metrics/", pattern: "*.metrics"
     scratch params.scratch_small
     memory "${params.m_mem} GB"
-    cpus params.htp_cores     
+    cpus params.mtp_cores     
     
     
     input:
@@ -166,6 +166,52 @@ process bam_index{
       
 }
 
+
+
+
+process sam2bam{
+
+    publishDir "${params.WD}/bam/", pattern: "*.bam"
+    scratch params.scratch_small
+    memory "${params.m_mem} GB"
+    cpus params.mtp_cores     
+    
+    
+    input:
+        path SAM
+
+    output:
+	path BAM_file, emit: BAM
+
+
+script:
+BAM_file =  SE_reads.getSimpleName() + '.bam'
+
+"""
+   
+   samtools \
+       view \
+       ${SAM_file} \
+       -F 4 \
+       -b \
+       --threads ${params.mtp_cores} \
+       -o ${BAM_file} 
+
+            
+"""	
+
+
+}
+
+
+
+   samtools \
+       view \
+       ${SAM_file} \
+       -F 4 \
+       -b \
+       --threads ${params.mtp_cores} \
+       -o ${BAM_file} 
 
 
 
@@ -364,7 +410,7 @@ process hmmscan{
 
 process  star{
 
-    publishDir "${params.WD}/STAR/bam/", pattern: "*.bam",  mode: 'copy'
+    publishDir "${params.WD}/STAR/sam/", pattern: "*.sam",  mode: 'copy'
     publishDir "${params.WD}/STAR/${basename}/",  mode: 'copy'
     scratch params.scratch_large
     memory "${params.m_mem} GB"
@@ -377,7 +423,7 @@ process  star{
 	path gtf
 
     output:
-	path BAM_file, emit: BAM
+	path BAM_file, emit: SAM
 	path "basename*"
 	
 
@@ -394,7 +440,6 @@ BAM_file =  basename + '.bam'
       --genomeDir ${star_index_path} \
       --sjdbGTFfile ${gtf} \
       --readFilesIn ${SE_reads} \
-      --outSAMattributes All \
       --outFileNamePrefix ${basename}
 
 """	
