@@ -409,14 +409,14 @@ process  star{
 	path gtf
 
     output:
-	path BAM_file, emit: SAM
+	path SAM_file, emit: SAM
 	path "basename*"
 	
 
 
 script:
 basename = SE_reads.getSimpleName()
-BAM_file =  basename + '.bam'
+SAM_file =  basename + '.sam'
 
 """
 
