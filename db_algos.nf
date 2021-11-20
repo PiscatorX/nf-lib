@@ -168,7 +168,7 @@ process bam_index{
 
 
 
-process sam2bam{
+process samtobam{
 
     publishDir "${params.WD}/bam/", pattern: "*.bam"
     scratch params.scratch_small
