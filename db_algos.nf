@@ -168,7 +168,6 @@ process bam_index{
 
 
 
-
 process sam2bam{
 
     publishDir "${params.WD}/bam/", pattern: "*.bam"
@@ -196,23 +195,10 @@ BAM_file =  SE_reads.getSimpleName() + '.bam'
        -b \
        --threads ${params.mtp_cores} \
        -o ${BAM_file} 
-
-            
+    
 """	
 
-
 }
-
-
-
-   samtools \
-       view \
-       ${SAM_file} \
-       -F 4 \
-       -b \
-       --threads ${params.mtp_cores} \
-       -o ${BAM_file} 
-
 
 
 
