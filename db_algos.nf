@@ -394,7 +394,7 @@ process hmmscan{
 
 
 
-process  star{
+process  starRNA{
 
     publishDir "${params.WD}/STAR/${basename}/",  mode: 'copy'
     scratch params.scratch_large
