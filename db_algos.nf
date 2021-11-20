@@ -396,7 +396,6 @@ process hmmscan{
 
 process  star{
 
-    publishDir "${params.WD}/STAR/sam/", pattern: "*.sam",  mode: 'copy'
     publishDir "${params.WD}/STAR/${basename}/",  mode: 'copy'
     scratch params.scratch_large
     memory "${params.m_mem} GB"
