@@ -425,8 +425,7 @@ SAM_file =  basename + '.sam'
       --runThreadN ${params.mtp_cores} \
       --genomeDir ${star_index_path} \
       --sjdbGTFfile ${gtf} \
-      --readFilesIn ${SE_reads} \
-      --outFileNamePrefix ${basename}
+      --readFilesIn ${SE_reads} 
 
 """	
 
