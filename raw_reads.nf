@@ -155,7 +155,7 @@ process trimmomatic_SE{
 process infoseq{
 
     publishDir path: "${params.WD}/infoseq", mode: 'copy'
-    scratch params.scratch_small
+    scratch params.scratch_large
     memory "${params.l_mem} GB"
     cpus  params.ltp_cores
     input:
