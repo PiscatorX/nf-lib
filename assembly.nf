@@ -34,17 +34,20 @@ process assembly_stats{
 
     cpus params.ltp_cores
     memory "${params.l_mem} GB"
-    publishDir "$params.WD/Trinity",  mode: 'move'
+    publishDir "$params.WD/${basename}",  mode: 'move'
     
     input:
 	path assembly
 	
     output:
-         path "Assembly.stats"
+         path "${basename}.assembly_stats"
 	 
+script:
+basename = assembly.getSimpleName()
+
 """
 
-   TrinityStats.pl ${assembly} > Assembly.stats
+   TrinityStats.pl ${assembly} > ${basename}.assembly_stats
 
 """
 
