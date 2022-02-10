@@ -332,6 +332,8 @@ blastout_fmt6 = query_seqs.getSimpleName() + '.blastx'
 
 process busco_auto_euk{
 
+    tag "${denovo_ref}"
+   
     publishDir path: "${params.WD}",  mode: 'move'
     scratch params.scratch_small
     memory "${params.m_mem} GB"
@@ -365,6 +367,8 @@ process busco_auto_euk{
 
 process busco{
 
+    tag "${denovo_ref}"
+   
     publishDir path: "${params.WD}",  mode: 'move'
     scratch params.scratch_small
     memory "${params.m_mem} GB"
