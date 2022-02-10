@@ -339,6 +339,8 @@ process busco_auto_euk{
     
     input:
         path denovo_ref
+	val mode
+	val download_path
 
     output:
         path "Busco_${denovo_ref}"
@@ -347,17 +349,55 @@ process busco_auto_euk{
 """
   
     busco \
-        -m transcriptome \
+        -m ${mode} \
         -i ${denovo_ref} \
         --cpu ${params.mtp_cores} \
         -o Busco_${denovo_ref} \
-        --download_path ${DB_REF} \
+        --download_path ${download_path} \
         --auto-lineage-euk
         
-
 """	
 
 }
+
+
+
+
+process busco{
+
+    publishDir path: "${params.WD}",  mode: 'move'
+    scratch params.scratch_small
+    memory "${params.m_mem} GB"
+    cpus params.mtp_cores
+    
+    input:
+        path denovo_ref
+	val mode
+	val lineage
+	val download_path
+
+    output:
+        path "Busco_${denovo_ref}"
+
+
+"""
+  
+    busco \
+        -m ${mode} \
+        -i ${denovo_ref} \
+        --cpu ${params.mtp_cores} \
+        -o Busco_${denovo_ref} \
+        --download_path ${download_path} \
+        --lineage ${lineage}
+        
+"""	
+
+}
+
+
+
+
+
 
 
 
