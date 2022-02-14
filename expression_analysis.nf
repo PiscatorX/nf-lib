@@ -33,7 +33,6 @@ script:
        --est_method ${est_method} \
        --transcripts ${denovo_ref} \
        --seqType fa \
-       --trinity_mode \
        --thread_count ${params.mtp_cores} 
 
 """
@@ -71,7 +70,7 @@ process abundance_estimates_to_matrix{
     --name_sample_by_basedir      
 
  contig_ExN50_statistic.pl \
-     ${est_method}.isoform.TMM.EXPR.matrix Trinity.fasta > ExN50.stats
+     ${est_method}.isoform.TMM.EXPR.matrix ${denovo_ref} > ExN50.stats
 
 """
 //cat transcripts.TMM.EXPR.matrix.E-inputs |  egrep -v ^\# | awk '$1 <= 90' | wc -l
@@ -134,6 +133,7 @@ process salmon_quant{
     salmon \
         quant \
         --libType A \
+        --gcBias \
 	--no-version-check \
         --alignments ${bam} \
         --targets ${fasta_reference} \
