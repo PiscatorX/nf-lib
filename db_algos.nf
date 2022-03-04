@@ -1,4 +1,4 @@
-#!/usr/bin/env nextflow
+s#!/usr/bin/env nextflow
 
 
 
@@ -302,6 +302,7 @@ process blast_tophit{
     cpus params.htp_cores
     
     input:
+        val algorithm
 	path query_seqs
 	path fasta_reference
         val DB_path
@@ -314,7 +315,7 @@ db_name =  fasta_reference.getBaseName()
 blastout_fmt6 = query_seqs.getSimpleName() + '.blastx'
 """
 
-    blastx \
+    ${algorithm} \
        -query ${query_seqs} \
        -db  ${DB_path}/${fasta_reference} \
        -out ${blastout_fmt6} \
